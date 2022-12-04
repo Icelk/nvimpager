@@ -123,8 +123,10 @@ args2=(
 )
 # Switch to cat mode if all files combined are shorter than the terminal
 # height.
+lines=$(tput lines)
+divisor=3
 if [[ $mode = cat || \
-      $mode = auto && $(cat "${files[@]}" | wc -l) -le $(tput lines) ]]
+    $mode = auto && $(cat "${files[@]}" | wc -l) -le $((lines / divisor)) ]]
 then
   args1+=(--headless)
 fi
