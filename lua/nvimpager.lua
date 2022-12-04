@@ -307,20 +307,20 @@ end
 -- Fix the runtimepath.  All user nvim folders are replaced by corresponding
 -- nvimpager folders.
 local function fix_runtime_path()
-  local runtimepath = nvim.nvim_list_runtime_paths()
-  -- Remove the custom nvimpager entry that was added on the command line.
-  runtimepath[#runtimepath] = nil
-  local new
-  for _, name in ipairs({"config", "data"}) do
-    local original = nvim.nvim_call_function("stdpath", {name})
-    new = original .."pager"
-    runtimepath = replace_prefix(runtimepath, original, new)
-  end
-  runtimepath = table.concat(runtimepath, ",")
-  nvim.nvim_set_option("packpath", runtimepath)
-  runtimepath = os.getenv("RUNTIME") .. "," .. runtimepath
-  nvim.nvim_set_option("runtimepath", runtimepath)
-  vim.env.NVIM_RPLUGIN_MANIFEST = new .. '/rplugin.vim'
+  -- local runtimepath = nvim.nvim_list_runtime_paths()
+  -- -- Remove the custom nvimpager entry that was added on the command line.
+  -- runtimepath[#runtimepath] = nil
+  -- local new
+  -- for _, name in ipairs({"config", "data"}) do
+  --   local original = nvim.nvim_call_function("stdpath", {name})
+  --   new = original .."pager"
+  --   runtimepath = replace_prefix(runtimepath, original, new)
+  -- end
+  -- runtimepath = table.concat(runtimepath, ",")
+  -- nvim.nvim_set_option("packpath", runtimepath)
+  -- runtimepath = os.getenv("RUNTIME") .. "," .. runtimepath
+  -- nvim.nvim_set_option("runtimepath", runtimepath)
+  -- vim.env.NVIM_RPLUGIN_MANIFEST = new .. '/rplugin.vim'
 end
 
 -- Parse the command of the calling process to detect some common
@@ -698,6 +698,7 @@ end
 -- Setup function for the VimEnter autocmd.
 -- This function will be called for each buffer once
 function nvimpager.pager_mode()
+  vim.o.fdm = 'manual'
   if check_escape_sequences() then
     -- Try to highlight ansi escape sequences.
     ansi2highlight()
@@ -730,6 +731,7 @@ function nvimpager.stage1()
   nvim.nvim_set_option('shada', '')
   -- prevent messages when opening files (especially for the cat version)
   nvim.nvim_set_option('shortmess', nvim.nvim_get_option('shortmess')..'F')
+
   -- Define autocmd group for nvimpager.
   local group = nvim.nvim_create_augroup('NvimPager', {})
   local tmp = os.getenv('TMPFILE')
